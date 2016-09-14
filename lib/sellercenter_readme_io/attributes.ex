@@ -69,6 +69,7 @@ defmodule SellercenterReadmeIo.Attributes do
     {description, description_es} = get_descriptions(channel, attribute)
     is_mandatory = get_is_mandatory(attribute)
     options = get_options(channel, attribute)
+    options = Enum.into(options, %{})
     type = get_type(options, attribute)
     %{
       "name" => name,
@@ -117,43 +118,43 @@ defmodule SellercenterReadmeIo.Attributes do
     false
   end
 
-  def get_type([], %{"InputType" => "checkbox"}) do
+  def get_type(options, %{"InputType" => "checkbox"}) when Kernel.map_size(options) == 0 do
     ~s(input[type="checkbox"])
   end
 
-  def get_type([], %{"InputType" => "datefield"}) do
+  def get_type(options, %{"InputType" => "datefield"}) when Kernel.map_size(options) == 0 do
     ~s(input[type="date"])
   end
 
-  def get_type([], %{"InputType" => "datetime"}) do
+  def get_type(options, %{"InputType" => "datetime"}) when Kernel.map_size(options) == 0 do
     ~s(input[type="datetime"])
   end
 
-  def get_type([], %{"InputType" => "dropdown"}) do
+  def get_type(options, %{"InputType" => "dropdown"}) when Kernel.map_size(options) == 0 do
     ~s(select)
   end
 
-  def get_type([], %{"InputType" => "multiselect"}) do
+  def get_type(options, %{"InputType" => "multiselect"}) when Kernel.map_size(options) == 0 do
     ~s(select[multiple="multiple"])
   end
 
-  def get_type([], %{"InputType" => "numberfield"}) do
+  def get_type(options, %{"InputType" => "numberfield"}) when Kernel.map_size(options) == 0 do
     ~s(input[type="number"])
   end
 
-  def get_type([], %{"InputType" => "textarea"}) do
+  def get_type(options, %{"InputType" => "textarea"}) when Kernel.map_size(options) == 0 do
     ~s(textarea)
   end
 
-  def get_type([], %{"InputType" => "textfield"}) do
+  def get_type(options, %{"InputType" => "textfield"}) when Kernel.map_size(options) == 0 do
     ~s(input[type="text"])
   end
 
-  def get_type([], _type) do
+  def get_type(options, _type) when Kernel.map_size(options) == 0 do
     ~s(input[type="text"])
   end
 
-  def get_type(_options, _type) do
+  def get_type(options, _type) when Kernel.map_size(options) != 0 do
     "select"
   end
 
