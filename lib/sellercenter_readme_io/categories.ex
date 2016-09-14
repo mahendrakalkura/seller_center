@@ -57,6 +57,7 @@ defmodule SellercenterReadmeIo.Categories do
   def get_categories(parent, categories) when Kernel.is_list(categories) do
     categories = Enum.map(categories, fn(category) -> get_category(parent, category) end)
     categories = List.flatten(categories)
+    categories = Enum.uniq(categories)
     categories
   end
 
