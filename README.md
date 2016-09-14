@@ -55,6 +55,6 @@ iex(1)> channel = %{
   "user_id" => "..."}
 iex(2)> SellercenterReadmeIo.Categories.query(channel)
 {:ok, [...]}
-iex(3)> SellercenterReadmeIo.Attributes.query(channel, "10")
+iex(3)> SellercenterReadmeIo.Attributes.query(channel, "...")
 {:ok, [...]}
 ```
