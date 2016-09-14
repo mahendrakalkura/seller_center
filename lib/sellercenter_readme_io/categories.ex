@@ -17,7 +17,8 @@ defmodule SellercenterReadmeIo.Categories do
     }
     params = SellercenterReadmeIo.get_params(channel, params)
     options = [
-      {:params, params}
+      {:params, params},
+      {:timeout, 30_000}
     ]
     response = SellercenterReadmeIo.parse_http(HTTPoison.request(method, url, body, headers, options))
     response = parse_http(response)
@@ -55,9 +56,14 @@ defmodule SellercenterReadmeIo.Categories do
   end
 
   def get_categories(parent, categories) when Kernel.is_list(categories) do
-    categories = Enum.map(categories, fn(category) -> get_category(parent, category) end)
-    categories = List.flatten(categories)
-    categories = Enum.uniq(categories)
+    categories = Enum.reduce(
+      categories,
+      %{},
+      fn(category, categories) ->
+        category = get_category(parent, category)
+        Map.merge(categories, category)
+      end
+    )
     categories
   end
 
@@ -65,8 +71,7 @@ defmodule SellercenterReadmeIo.Categories do
     guid = category["CategoryId"]
     name = get_name(parent, category["Name"])
     %{
-      "guid" => guid,
-      "name" => name,
+      guid => name,
     }
   end
 
