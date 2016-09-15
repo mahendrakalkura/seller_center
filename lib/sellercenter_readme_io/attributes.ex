@@ -17,51 +17,55 @@ defmodule SellercenterReadmeIo.Attributes do
     options = [
       {:params, params}
     ]
-    response = SellercenterReadmeIo.parse_http(HTTPoison.request(method, url, body, headers, options))
-    response = parse_http(channel, response)
-    response
+    result = SellercenterReadmeIo.parse_http(HTTPoison.request(method, url, body, headers, options))
+    result = parse_body(channel, result)
+    result
   end
 
-  def parse_http(channel, {:ok, %{"SuccessResponse" => success_response}}) do
-    response = {:ok, success_response}
-    response = parse_http(channel, response)
-    response
+  def parse_body(channel, {:ok, %{"SuccessResponse" => success_response}}) do
+    result = {:ok, success_response}
+    result = parse_body(channel, result)
+    result
   end
 
-  def parse_http(channel, {:ok, %{"Body" => body}}) do
-    response = {:ok, body}
-    response = parse_http(channel, response)
-    response
+  def parse_body(channel, {:ok, %{"Body" => body}}) do
+    result = {:ok, body}
+    result = parse_body(channel, result)
+    result
   end
 
-  def parse_http(channel, {:ok, %{"Attribute" => attributes}}) do
+  def parse_body(channel, {:ok, %{"Attribute" => attributes}}) do
     attributes = Enum.map(attributes, fn(attribute) -> get_attribute(channel, attribute) end)
     attributes = Enum.uniq(attributes)
-    {:ok, attributes}
+    result = {:ok, attributes}
+    result
   end
 
-  def parse_http(channel, {:ok, %{"ErrorResponse" => error_response}}) do
-    response = {:ok, error_response}
-    response = parse_http(channel, response)
-    response
+  def parse_body(channel, {:ok, %{"ErrorResponse" => error_response}}) do
+    result = {:ok, error_response}
+    result = parse_body(channel, result)
+    result
   end
 
-  def parse_http(channel, {:ok, %{"Head" => head}}) do
-    response = {:ok, head}
-    response = parse_http(channel, response)
-    response
+  def parse_body(channel, {:ok, %{"Head" => head}}) do
+    result = {:ok, head}
+    result = parse_body(channel, result)
+    result
   end
 
-  def parse_http(_channel, {:ok, %{"ErrorCode" => error_code}}) do
-    {:ok, error_code}
+  def parse_body(_channel, {:ok, %{"ErrorCode" => error_code}}) do
+    result = {:ok, error_code}
+    result
   end
 
-  def parse_http(_channel, {:ok, _attributes}) do
-    {:error, ""}
+  def parse_body(_channel, {:ok, _attributes}) do
+    result = {:error, nil}
+    result
   end
 
-  def parse_http(_channel, {:error, reason}) do
-    {:error, reason}
+  def parse_body(_channel, {:error, reason}) do
+    result = {:error, reason}
+    result
   end
 
   def get_attribute(channel, attribute) do
@@ -71,7 +75,7 @@ defmodule SellercenterReadmeIo.Attributes do
     options = get_options(channel, attribute)
     options = Enum.into(options, %{})
     type = get_type(options, attribute)
-    %{
+    attribute = %{
       "name" => name,
       "name_es" => name_es,
       "description" => description,
@@ -80,82 +84,102 @@ defmodule SellercenterReadmeIo.Attributes do
       "type" => type,
       "options" => options,
     }
+    attribute
   end
 
   def get_names(%{"language" => "en"}, attribute) do
-    {attribute["Label"], ""}
+    names = {attribute["Label"], ""}
+    names
   end
 
   def get_names(%{"language" => "es"}, attribute) do
-    {"", attribute["Label"]}
+    names = {"", attribute["Label"]}
+    names
   end
 
   def get_names(_channel, attribute) do
-    {attribute["Label"], ""}
+    names = {attribute["Label"], ""}
+    names
   end
 
   def get_descriptions(%{"language" => "en"}, attribute) do
-    {attribute["Description"], ""}
+    descriptions = {attribute["Description"], ""}
+    descriptions
   end
 
   def get_descriptions(%{"language" => "es"}, attribute) do
-    {"", attribute["Description"]}
+    descriptions = {"", attribute["Description"]}
+    descriptions
   end
 
   def get_descriptions(_channel, attribute) do
-    {attribute["Description"], ""}
+    descriptions = {attribute["Description"], ""}
+    descriptions
   end
 
   def get_is_mandatory(%{"isMandatory" => "0"}) do
-    false
+    is_mandatory = false
+    is_mandatory
   end
 
   def get_is_mandatory(%{"isMandatory" => "1"}) do
-    true
+    is_mandatory = true
+    is_mandatory
   end
 
   def get_is_mandatory(_) do
-    false
+    is_mandatory = false
+    is_mandatory
   end
 
   def get_type(options, %{"InputType" => "checkbox"}) when Kernel.map_size(options) == 0 do
-    ~s(input[type="checkbox"])
+    type = ~s(input[type="checkbox"])
+    type
   end
 
   def get_type(options, %{"InputType" => "datefield"}) when Kernel.map_size(options) == 0 do
-    ~s(input[type="date"])
+    type = ~s(input[type="date"])
+    type
   end
 
   def get_type(options, %{"InputType" => "datetime"}) when Kernel.map_size(options) == 0 do
-    ~s(input[type="datetime"])
+    type = ~s(input[type="datetime"])
+    type
   end
 
   def get_type(options, %{"InputType" => "dropdown"}) when Kernel.map_size(options) == 0 do
-    ~s(select)
+    type = ~s(select)
+    type
   end
 
   def get_type(options, %{"InputType" => "multiselect"}) when Kernel.map_size(options) == 0 do
-    ~s(select[multiple="multiple"])
+    type = ~s(select[multiple="multiple"])
+    type
   end
 
   def get_type(options, %{"InputType" => "numberfield"}) when Kernel.map_size(options) == 0 do
-    ~s(input[type="number"])
+    type = ~s(input[type="number"])
+    type
   end
 
   def get_type(options, %{"InputType" => "textarea"}) when Kernel.map_size(options) == 0 do
-    ~s(textarea)
+    type = ~s(textarea)
+    type
   end
 
   def get_type(options, %{"InputType" => "textfield"}) when Kernel.map_size(options) == 0 do
-    ~s(input[type="text"])
+    type = ~s(input[type="text"])
+    type
   end
 
   def get_type(options, _type) when Kernel.map_size(options) == 0 do
-    ~s(input[type="text"])
+    type = ~s(input[type="text"])
+    type
   end
 
   def get_type(options, _type) when Kernel.map_size(options) != 0 do
-    "select"
+    type = "select"
+    type
   end
 
   def get_options(channel, %{"Options" => options}) do
@@ -169,7 +193,8 @@ defmodule SellercenterReadmeIo.Attributes do
   end
 
   def get_options(_channel, "") do
-    []
+    options = []
+    options
   end
 
   def get_options(channel, options) do
@@ -179,14 +204,17 @@ defmodule SellercenterReadmeIo.Attributes do
   end
 
   def get_option(%{"language" => "en"}, option) do
-    {option["Name"], option["Name"]}
+    option = {option["Name"], option["Name"]}
+    option
   end
 
   def get_option(%{"language" => "es"}, option) do
-    {option["Name"], ""}
+    option = {option["Name"], ""}
+    option
   end
 
   def get_option(_channel, option) do
-    {option["Name"], option["Name"]}
+    option = {option["Name"], option["Name"]}
+    option
   end
 end

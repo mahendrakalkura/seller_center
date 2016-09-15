@@ -1,4 +1,6 @@
 defmodule SellercenterReadmeIo.Mixfile do
+  @moduledoc false
+
   use Mix.Project
 
   def application do

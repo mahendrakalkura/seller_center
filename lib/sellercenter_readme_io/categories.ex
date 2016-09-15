@@ -20,34 +20,37 @@ defmodule SellercenterReadmeIo.Categories do
       {:params, params},
       {:timeout, 30_000}
     ]
-    response = SellercenterReadmeIo.parse_http(HTTPoison.request(method, url, body, headers, options))
-    response = parse_http(response)
-    response
+    result = SellercenterReadmeIo.parse_http(HTTPoison.request(method, url, body, headers, options))
+    result = parse_body(result)
+    result
   end
 
-  def parse_http({:ok, %{"SuccessResponse" => success_response}}) do
-    response = {:ok, success_response}
-    response = parse_http(response)
-    response
+  def parse_body({:ok, %{"SuccessResponse" => success_response}}) do
+    result = {:ok, success_response}
+    result = parse_body(result)
+    result
   end
 
-  def parse_http({:ok, %{"Body" => body}}) do
-    response = {:ok, body}
-    response = parse_http(response)
-    response
+  def parse_body({:ok, %{"Body" => body}}) do
+    result = {:ok, body}
+    result = parse_body(result)
+    result
   end
 
-  def parse_http({:ok, %{"Categories" => categories}}) do
+  def parse_body({:ok, %{"Categories" => categories}}) do
     categories = get_categories([], categories["Category"])
-    {:ok, categories}
+    result = {:ok, categories}
+    result
   end
 
-  def parse_http({:ok, _response}) do
-    {:error, ""}
+  def parse_body({:ok, _response}) do
+    result = {:error, nil}
+    result
   end
 
-  def parse_http({:error, reason}) do
-    {:error, reason}
+  def parse_body({:error, reason}) do
+    result = {:error, reason}
+    result
   end
 
   def get_categories(parent, categories) when Kernel.is_map(categories) do
@@ -70,15 +73,16 @@ defmodule SellercenterReadmeIo.Categories do
   def get_category(parent, category = %{"Children" => ""}) do
     guid = category["CategoryId"]
     name = get_name(parent, category["Name"])
-    %{
+    category = %{
       guid => name,
     }
+    category
   end
 
   def get_category(parent, category) do
     parent = parent ++ [category["Name"]]
-    categories = get_categories(parent, category["Children"]["Category"])
-    categories
+    category = get_categories(parent, category["Children"]["Category"])
+    category
   end
 
   def get_name(parent, name) do

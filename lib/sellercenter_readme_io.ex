@@ -48,15 +48,17 @@ defmodule SellercenterReadmeIo do
   end
 
   def parse_http({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
-    response = JSX.decode(body)
-    response
+    result = JSX.decode(body)
+    result
   end
 
   def parse_http({:ok, %HTTPoison.Response{status_code: status_code}}) do
-    {:error, status_code}
+    result = {:error, status_code}
+    result
   end
 
   def parse_http({:error, %HTTPoison.Error{reason: reason}}) do
-    {:error, reason}
+    result = {:error, reason}
+    result
   end
 end
