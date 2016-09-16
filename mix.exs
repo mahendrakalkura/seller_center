@@ -3,7 +3,7 @@ defmodule SellercenterReadmeIo.Mixfile do
 
   use Mix.Project
 
-  def application do
+  def application() do
     [
       applications: [
         :httpoison,
@@ -12,7 +12,7 @@ defmodule SellercenterReadmeIo.Mixfile do
     ]
   end
 
-  def deps do
+  def deps() do
     [
       {:credo, "~> 0.4"},
       {:dogma, "~> 0.1"},
@@ -22,7 +22,7 @@ defmodule SellercenterReadmeIo.Mixfile do
     ]
   end
 
-  def project do
+  def project() do
     [
       app: :sellercenter_readme_io,
       build_embedded: Mix.env == :prod,
