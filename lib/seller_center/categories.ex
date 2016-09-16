@@ -1,11 +1,11 @@
-defmodule SellercenterReadmeIo.Categories do
+defmodule SellerCenter.Categories do
   @moduledoc false
 
   require Enum
   require File
   require JSX
   require List
-  require SellercenterReadmeIo
+  require SellerCenter
 
   def query(channel) do
     method = :get
@@ -15,11 +15,11 @@ defmodule SellercenterReadmeIo.Categories do
     params = %{
       "Action" => "GetCategoryTree",
     }
-    params = SellercenterReadmeIo.get_params(channel, params)
+    params = SellerCenter.get_params(channel, params)
     options = [
       {:params, params},
     ]
-    result = SellercenterReadmeIo.parse_http(HTTPoison.request(method, url, body, headers, options))
+    result = SellerCenter.parse_http(HTTPoison.request(method, url, body, headers, options))
     result = parse_body(result)
     result
   end

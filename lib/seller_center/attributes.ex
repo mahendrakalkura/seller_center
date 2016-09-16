@@ -1,8 +1,8 @@
-defmodule SellercenterReadmeIo.Attributes do
+defmodule SellerCenter.Attributes do
   @moduledoc false
 
   require Map
-  require SellercenterReadmeIo
+  require SellerCenter
 
   def query(channel, primary_category) do
     method = :get
@@ -13,11 +13,11 @@ defmodule SellercenterReadmeIo.Attributes do
       "Action" => "GetCategoryAttributes",
       "PrimaryCategory" => primary_category,
     }
-    params = SellercenterReadmeIo.get_params(channel, params)
+    params = SellerCenter.get_params(channel, params)
     options = [
       {:params, params},
     ]
-    result = SellercenterReadmeIo.parse_http(HTTPoison.request(method, url, body, headers, options))
+    result = SellerCenter.parse_http(HTTPoison.request(method, url, body, headers, options))
     result = parse_body(channel, result)
     result
   end

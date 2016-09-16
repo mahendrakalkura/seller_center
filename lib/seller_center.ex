@@ -1,4 +1,4 @@
-defmodule SellercenterReadmeIo do
+defmodule SellerCenter do
   @moduledoc false
 
   require Base

@@ -1,4 +1,4 @@
-defmodule SellercenterReadmeIo.Mixfile do
+defmodule SellerCenter.Mixfile do
   @moduledoc false
 
   use Mix.Project
@@ -24,7 +24,7 @@ defmodule SellercenterReadmeIo.Mixfile do
 
   def project() do
     [
-      app: :sellercenter_readme_io,
+      app: :seller_center,
       build_embedded: Mix.env == :prod,
       deps: deps(),
       elixir: "~> 1.3",

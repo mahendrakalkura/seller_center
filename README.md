@@ -4,14 +4,14 @@ How to install?
 Step 1
 ------
 
-Add `:sellercenter_readme_io` to `def application()` in your `mix.exs`.
+Add `:seller_center` to `def application()` in your `mix.exs`.
 
 ```
 def application() do
   [
     applications: [
       ...
-      :sellercenter_readme_io,
+      :seller_center,
       ...
     ]
   ]
@@ -21,13 +21,13 @@ end
 Step 2
 ------
 
-Add `:sellercenter_readme_io` to `def deps()` in your `mix.exs`.
+Add `:seller_center` to `def deps()` in your `mix.exs`.
 
 ```
 def deps do
   [
     ...
-    {:sellercenter_readme_io, git: "https://github.com/mahendrakalkura/sellercenter.readme.io.git"},
+    {:seller_center, git: "https://github.com/mahendrakalkura/sellercenter.readme.io.git"},
     ...
   ]
 end
@@ -53,8 +53,8 @@ iex(1)> channel = %{
   "language" => "...",
   "url" => "...",
   "user_id" => "..."}
-iex(2)> SellercenterReadmeIo.Categories.query(channel)
+iex(2)> SellerCenter.Categories.query(channel)
 {:ok, [...]}
-iex(3)> SellercenterReadmeIo.Attributes.query(channel, "...")
+iex(3)> SellerCenter.Attributes.query(channel, "...")
 {:ok, [...]}
 ```
