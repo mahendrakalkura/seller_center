@@ -18,7 +18,6 @@ defmodule SellercenterReadmeIo.Categories do
     params = SellercenterReadmeIo.get_params(channel, params)
     options = [
       {:params, params},
-      {:timeout, 30_000}
     ]
     result = SellercenterReadmeIo.parse_http(HTTPoison.request(method, url, body, headers, options))
     result = parse_body(result)

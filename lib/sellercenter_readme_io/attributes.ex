@@ -15,7 +15,7 @@ defmodule SellercenterReadmeIo.Attributes do
     }
     params = SellercenterReadmeIo.get_params(channel, params)
     options = [
-      {:params, params}
+      {:params, params},
     ]
     result = SellercenterReadmeIo.parse_http(HTTPoison.request(method, url, body, headers, options))
     result = parse_body(channel, result)

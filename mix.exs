@@ -7,8 +7,8 @@ defmodule SellercenterReadmeIo.Mixfile do
     [
       applications: [
         :httpoison,
-        :timex
-      ]
+        :timex,
+      ],
     ]
   end
 
@@ -18,7 +18,7 @@ defmodule SellercenterReadmeIo.Mixfile do
       {:dogma, "~> 0.1"},
       {:exjsx, "~> 3.2"},
       {:httpoison, "~> 0.9.0"},
-      {:timex, "~> 3.0"}
+      {:timex, "~> 3.0"},
     ]
   end
 
@@ -29,7 +29,7 @@ defmodule SellercenterReadmeIo.Mixfile do
       deps: deps(),
       elixir: "~> 1.3",
       start_permanent: Mix.env == :prod,
-      version: "0.1.0"
+      version: "0.1.0",
     ]
   end
 end
