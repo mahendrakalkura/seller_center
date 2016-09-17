@@ -5,19 +5,9 @@ defmodule SellerCenter.Attributes do
   require SellerCenter
 
   def query(channel, primary_category) do
-    method = :get
-    url = channel["url"]
-    body = ""
-    headers = []
-    params = %{
-      "Action" => "GetCategoryAttributes",
-      "PrimaryCategory" => primary_category,
-    }
-    params = SellerCenter.get_params(channel, params)
-    options = [
-      {:params, params},
-    ]
-    result = SellerCenter.parse_http(HTTPoison.request(method, url, body, headers, options))
+    result = get_arguments(channel, primary_category)
+    result = SellerCenter.http_poison(result)
+    result = SellerCenter.parse_response(result)
     result = parse_body(channel, result)
     result
   end
@@ -65,6 +55,29 @@ defmodule SellerCenter.Attributes do
 
   def parse_body(_channel, {:error, reason}) do
     result = {:error, reason}
+    result
+  end
+
+  def get_arguments(channel, primary_category) do
+    method = :get
+    url = channel["url"]
+    body = ""
+    headers = []
+    params = %{
+      "Action" => "GetCategoryAttributes",
+      "PrimaryCategory" => primary_category,
+    }
+    params = SellerCenter.get_params(channel, params)
+    options = [
+      {:params, params},
+    ]
+    result = %{
+      "method" => method,
+      "url" => url,
+      "body" => body,
+      "headers" => headers,
+      "options" => options,
+    }
     result
   end
 

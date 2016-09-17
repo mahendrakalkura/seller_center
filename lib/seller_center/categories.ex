@@ -8,18 +8,9 @@ defmodule SellerCenter.Categories do
   require SellerCenter
 
   def query(channel) do
-    method = :get
-    url = channel["url"]
-    body = ""
-    headers = []
-    params = %{
-      "Action" => "GetCategoryTree",
-    }
-    params = SellerCenter.get_params(channel, params)
-    options = [
-      {:params, params},
-    ]
-    result = SellerCenter.parse_http(HTTPoison.request(method, url, body, headers, options))
+    result = get_arguments(channel)
+    result = SellerCenter.http_poison(result)
+    result = SellerCenter.parse_response(result)
     result = parse_body(result)
     result
   end
@@ -49,6 +40,28 @@ defmodule SellerCenter.Categories do
 
   def parse_body({:error, reason}) do
     result = {:error, reason}
+    result
+  end
+
+  def get_arguments(channel) do
+    method = :get
+    url = channel["url"]
+    body = ""
+    headers = []
+    params = %{
+      "Action" => "GetCategoryTree",
+    }
+    params = SellerCenter.get_params(channel, params)
+    options = [
+      {:params, params},
+    ]
+    result = %{
+      "method" => method,
+      "url" => url,
+      "body" => body,
+      "headers" => headers,
+      "options" => options,
+    }
     result
   end
 

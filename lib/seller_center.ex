@@ -10,6 +10,26 @@ defmodule SellerCenter do
   require Timex
   require URI
 
+  def http_poison(result) do
+    result = HTTPoison.request(result["method"], result["url"], result["body"], result["headers"], result["options"])
+    result
+  end
+
+  def parse_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
+    result = JSX.decode(body)
+    result
+  end
+
+  def parse_response({:ok, %HTTPoison.Response{status_code: status_code}}) do
+    result = {:error, status_code}
+    result
+  end
+
+  def parse_response({:error, %HTTPoison.Error{reason: reason}}) do
+    result = {:error, reason}
+    result
+  end
+
   def get_params(channel, params_custom) do
     timestamp = get_timestamp()
     params_default = %{
@@ -45,20 +65,5 @@ defmodule SellerCenter do
     signature = Base.encode16(signature)
     signature = String.downcase(signature)
     signature
-  end
-
-  def parse_http({:ok, %HTTPoison.Response{status_code: 200, body: body}}) do
-    result = JSX.decode(body)
-    result
-  end
-
-  def parse_http({:ok, %HTTPoison.Response{status_code: status_code}}) do
-    result = {:error, status_code}
-    result
-  end
-
-  def parse_http({:error, %HTTPoison.Error{reason: reason}}) do
-    result = {:error, reason}
-    result
   end
 end
