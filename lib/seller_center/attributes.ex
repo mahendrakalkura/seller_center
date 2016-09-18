@@ -195,18 +195,35 @@ defmodule SellerCenter.Attributes do
     type
   end
 
-  def get_options(channel, %{"Options" => options}) do
-    options = get_options(channel, options)
-    options
-  end
-
-  def get_options(channel, %{"Option" => options}) do
-    options = get_options(channel, options)
-    options
-  end
-
-  def get_options(_channel, "") do
+  def get_options(channel, %{"Options" => options}) when Kernel.is_bitstring(options) do
     options = []
+    options
+  end
+
+  def get_options(channel, %{"Options" => options}) when Kernel.is_map(options) do
+    options = [options]
+    options = get_options(channel, options)
+    options
+  end
+
+  def get_options(channel, %{"Options" => options}) when Kernel.is_list(options) do
+    options = get_options(channel, options)
+    options
+  end
+
+  def get_options(channel, %{"Option" => options}) when Kernel.is_bitstring(options) do
+    options = []
+    options
+  end
+
+  def get_options(channel, %{"Option" => options}) when Kernel.is_map(options) do
+    options = [options]
+    options = get_options(channel, options)
+    options
+  end
+
+  def get_options(channel, %{"Option" => options}) when Kernel.is_list(options) do
+    options = get_options(channel, options)
     options
   end
 
