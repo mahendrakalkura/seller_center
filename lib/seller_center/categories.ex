@@ -8,39 +8,33 @@ defmodule SellerCenter.Categories do
   require SellerCenter
 
   def query(channel) do
-    result = get_arguments(channel)
-    result = SellerCenter.http_poison(result)
-    result = SellerCenter.parse_response(result)
-    result = parse_body(result)
-    result
+    arguments = get_arguments(channel)
+    response = SellerCenter.http_poison(arguments)
+    body = SellerCenter.parse_response(response)
+    parse_body(body)
   end
 
   def parse_body({:ok, %{"SuccessResponse" => success_response}}) do
-    result = {:ok, success_response}
-    result = parse_body(result)
-    result
+    body = {:ok, success_response}
+    parse_body(body)
   end
 
   def parse_body({:ok, %{"Body" => body}}) do
-    result = {:ok, body}
-    result = parse_body(result)
-    result
+    body = {:ok, body}
+    parse_body(body)
   end
 
   def parse_body({:ok, %{"Categories" => categories}}) do
     categories = get_categories([], categories["Category"])
-    result = {:ok, categories}
-    result
+    {:ok, categories}
   end
 
   def parse_body({:ok, _response}) do
-    result = {:error, nil}
-    result
+    {:error, nil}
   end
 
   def parse_body({:error, reason}) do
-    result = {:error, reason}
-    result
+    {:error, reason}
   end
 
   def get_arguments(channel) do
@@ -57,23 +51,21 @@ defmodule SellerCenter.Categories do
       {:recv_timeout, Application.get_env(:httpoison, :timeout, nil)},
       {:timeout, Application.get_env(:httpoison, :timeout, nil)},
     ]
-    result = %{
+    %{
       "method" => method,
       "url" => url,
       "body" => body,
       "headers" => headers,
       "options" => options,
     }
-    result
   end
 
   def get_categories(parent, categories) when Kernel.is_map(categories) do
-    categories = get_categories(parent, [categories])
-    categories
+    get_categories(parent, [categories])
   end
 
   def get_categories(parent, categories) when Kernel.is_list(categories) do
-    categories = Enum.reduce(
+    Enum.reduce(
       categories,
       %{},
       fn(category, categories) ->
@@ -81,27 +73,23 @@ defmodule SellerCenter.Categories do
         Map.merge(categories, category)
       end
     )
-    categories
   end
 
   def get_category(parent, category = %{"Children" => ""}) do
     guid = category["CategoryId"]
     name = get_name(parent, category["Name"])
-    category = %{
+    %{
       guid => name,
     }
-    category
   end
 
   def get_category(parent, category) do
     parent = parent ++ [category["Name"]]
-    category = get_categories(parent, category["Children"]["Category"])
-    category
+    get_categories(parent, category["Children"]["Category"])
   end
 
   def get_name(parent, name) do
     name = parent ++ [name]
-    name = Enum.join(name, " > ")
-    name
+    Enum.join(name, " > ")
   end
 end
