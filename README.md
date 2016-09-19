@@ -27,7 +27,7 @@ Add `:seller_center` to `def deps()` in your `mix.exs`.
 def deps do
   [
     ...
-    {:seller_center, git: "https://github.com/mahendrakalkura/sellercenter.readme.io.git"},
+    {:seller_center, git: "https://github.com/mahendrakalkura/seller_center.git"},
     ...
   ]
 end
