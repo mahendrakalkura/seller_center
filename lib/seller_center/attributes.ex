@@ -23,8 +23,7 @@ defmodule SellerCenter.Attributes do
 
   def parse_body(channel, {:ok, %{"Attribute" => attributes}}) do
     attributes = Enum.map(
-      attributes,
-      fn(attribute) -> get_attribute(channel, attribute) end
+      attributes, fn(attribute) -> get_attribute(channel, attribute) end
     )
     attributes = Enum.uniq(attributes)
     {:ok, attributes}
