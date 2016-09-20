@@ -1,15 +1,6 @@
 defmodule SellerCenter do
   @moduledoc false
 
-  require Base
-  require Enum
-  require HTTPoison
-  require JSX
-  require Map
-  require String
-  require Timex
-  require URI
-
   def http_poison(arguments) do
     HTTPoison.request(
       arguments["method"],

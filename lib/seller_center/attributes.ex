@@ -1,9 +1,6 @@
 defmodule SellerCenter.Attributes do
   @moduledoc false
 
-  require Map
-  require SellerCenter
-
   def query(channel, primary_category) do
     arguments = get_arguments(channel, primary_category)
     response = SellerCenter.http_poison(arguments)

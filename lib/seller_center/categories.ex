@@ -1,12 +1,6 @@
 defmodule SellerCenter.Categories do
   @moduledoc false
 
-  require Enum
-  require File
-  require JSX
-  require List
-  require SellerCenter
-
   def query(channel) do
     arguments = get_arguments(channel)
     response = SellerCenter.http_poison(arguments)
