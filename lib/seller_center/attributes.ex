@@ -1,4 +1,4 @@
-defmodule SellerCenter.Attribute do
+defmodule SellerCenter.Attributes do
   @moduledoc false
 
   def query(channel, primary_category) do

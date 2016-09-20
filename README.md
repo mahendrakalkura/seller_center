@@ -53,8 +53,8 @@ iex(1)> channel = %{
   "language" => "...",
   "url" => "...",
   "user_id" => "..."}
-iex(2)> SellerCenter.Category.query(channel)
+iex(2)> SellerCenter.Categories.query(channel)
 {:ok, [...]}
-iex(3)> SellerCenter.Attribute.query(channel, "...")
+iex(3)> SellerCenter.Attributes.query(channel, "...")
 {:ok, [...]}
 ```

@@ -1,4 +1,4 @@
-defmodule SellerCenter.Category do
+defmodule SellerCenter.Categories do
   @moduledoc false
 
   def query(channel) do
