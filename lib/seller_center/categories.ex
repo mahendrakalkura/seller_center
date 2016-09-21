@@ -8,29 +8,6 @@ defmodule SellerCenter.Categories do
     parse_body(body)
   end
 
-  def parse_body({:ok, %{"SuccessResponse" => success_response}}) do
-    body = {:ok, success_response}
-    parse_body(body)
-  end
-
-  def parse_body({:ok, %{"Body" => body}}) do
-    body = {:ok, body}
-    parse_body(body)
-  end
-
-  def parse_body({:ok, %{"Categories" => categories}}) do
-    categories = get_categories([], categories["Category"])
-    {:ok, categories}
-  end
-
-  def parse_body({:ok, _response}) do
-    {:error, nil}
-  end
-
-  def parse_body({:error, reason}) do
-    {:error, reason}
-  end
-
   def get_arguments(channel) do
     method = :get
     url = channel["url"]
@@ -52,6 +29,29 @@ defmodule SellerCenter.Categories do
       "headers" => headers,
       "options" => options,
     }
+  end
+
+  def parse_body({:ok, %{"SuccessResponse" => success_response}}) do
+    body = {:ok, success_response}
+    parse_body(body)
+  end
+
+  def parse_body({:ok, %{"Body" => body}}) do
+    body = {:ok, body}
+    parse_body(body)
+  end
+
+  def parse_body({:ok, %{"Categories" => categories}}) do
+    categories = get_categories([], categories["Category"])
+    {:ok, categories}
+  end
+
+  def parse_body({:ok, _response}) do
+    {:error, nil}
+  end
+
+  def parse_body({:error, reason}) do
+    {:error, reason}
   end
 
   def get_categories(parent, categories) when Kernel.is_map(categories) do
