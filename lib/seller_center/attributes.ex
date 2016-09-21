@@ -8,6 +8,30 @@ defmodule SellerCenter.Attributes do
     parse_body(channel, body)
   end
 
+  def get_arguments(channel, primary_category) do
+    method = :get
+    url = channel["url"]
+    body = ""
+    headers = []
+    params = %{
+      "Action" => "GetCategoryAttributes",
+      "PrimaryCategory" => primary_category,
+    }
+    params = SellerCenter.get_params(channel, params)
+    options = [
+      {:params, params},
+      {:recv_timeout, Application.get_env(:httpoison, :timeout, nil)},
+      {:timeout, Application.get_env(:httpoison, :timeout, nil)},
+    ]
+    %{
+      "method" => method,
+      "url" => url,
+      "body" => body,
+      "headers" => headers,
+      "options" => options,
+    }
+  end
+
   def parse_body(channel, {:ok, %{"SuccessResponse" => success_response}}) do
     body = {:ok, success_response}
     parse_body(channel, body)
@@ -46,30 +70,6 @@ defmodule SellerCenter.Attributes do
 
   def parse_body(_channel, {:error, reason}) do
     {:error, reason}
-  end
-
-  def get_arguments(channel, primary_category) do
-    method = :get
-    url = channel["url"]
-    body = ""
-    headers = []
-    params = %{
-      "Action" => "GetCategoryAttributes",
-      "PrimaryCategory" => primary_category,
-    }
-    params = SellerCenter.get_params(channel, params)
-    options = [
-      {:params, params},
-      {:recv_timeout, Application.get_env(:httpoison, :timeout, nil)},
-      {:timeout, Application.get_env(:httpoison, :timeout, nil)},
-    ]
-    %{
-      "method" => method,
-      "url" => url,
-      "body" => body,
-      "headers" => headers,
-      "options" => options,
-    }
   end
 
   def get_attribute(channel, attribute) do
