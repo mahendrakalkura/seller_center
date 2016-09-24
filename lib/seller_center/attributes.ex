@@ -32,17 +32,19 @@ defmodule SellerCenter.Attributes do
     }
   end
 
-  def parse_body(channel, {:ok, %{"SuccessResponse" => success_response}}) do
+  def parse_body(channel, {:ok, %{"SuccessResponse" => success_response}})
+    when Kernel.is_map(success_response) do
     body = {:ok, success_response}
     parse_body(channel, body)
   end
 
-  def parse_body(channel, {:ok, %{"Body" => body}}) do
+  def parse_body(channel, {:ok, %{"Body" => body}}) when Kernel.is_map(body) do
     body = {:ok, body}
     parse_body(channel, body)
   end
 
-  def parse_body(channel, {:ok, %{"Attribute" => attributes}}) do
+  def parse_body(channel, {:ok, %{"Attribute" => attributes}})
+    when Kernel.is_map(attributes) do
     attributes = Enum.map(
       attributes, fn(attribute) -> get_attribute(channel, attribute) end
     )
@@ -50,12 +52,13 @@ defmodule SellerCenter.Attributes do
     {:ok, attributes}
   end
 
-  def parse_body(channel, {:ok, %{"ErrorResponse" => error_response}}) do
+  def parse_body(channel, {:ok, %{"ErrorResponse" => error_response}})
+    when Kernel.is_map(error_response) do
     body = {:ok, error_response}
     parse_body(channel, body)
   end
 
-  def parse_body(channel, {:ok, %{"Head" => head}}) do
+  def parse_body(channel, {:ok, %{"Head" => head}}) when Kernel.is_map(head) do
     body = {:ok, head}
     parse_body(channel, body)
   end
