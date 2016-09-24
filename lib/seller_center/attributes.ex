@@ -44,7 +44,7 @@ defmodule SellerCenter.Attributes do
   end
 
   def parse_body(channel, {:ok, %{"Attribute" => attributes}})
-    when Kernel.is_map(attributes) do
+    when Kernel.is_list(attributes) do
     attributes = Enum.map(
       attributes, fn(attribute) -> get_attribute(channel, attribute) end
     )
