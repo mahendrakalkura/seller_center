@@ -49,6 +49,15 @@ defmodule SellerCenter.Attributes do
       attributes, fn(attribute) -> get_attribute(channel, attribute) end
     )
     attributes = Enum.uniq(attributes)
+    attributes = Enum.sort_by(
+      attributes,
+      fn(attribute) ->
+        case channel["language"] do
+          "es" -> attribute["name_es"]
+          _language -> attribute["name"]
+        end
+      end
+    )
     {:ok, attributes}
   end
 
