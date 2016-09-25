@@ -45,7 +45,9 @@ defmodule SellerCenter.Categories do
     categories = get_categories([], categories["Category"])
     categories = List.flatten(categories)
     categories = Enum.uniq(categories)
-    categories = Enum.sort_by(categories, fn(category) -> category["name"] end)
+    categories = Enum.sort_by(
+      categories, fn(category) -> String.downcase(category["name"]) end
+    )
     {:ok, categories}
   end
 
