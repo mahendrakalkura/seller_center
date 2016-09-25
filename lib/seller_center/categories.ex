@@ -31,17 +31,9 @@ defmodule SellerCenter.Categories do
     }
   end
 
-  def parse_body({:ok, %{"SuccessResponse" => success_response}}) do
-    body = {:ok, success_response}
-    parse_body(body)
-  end
-
-  def parse_body({:ok, %{"Body" => body}}) do
-    body = {:ok, body}
-    parse_body(body)
-  end
-
-  def parse_body({:ok, %{"Categories" => categories}}) do
+  def parse_body(
+    {:ok, %{"SuccessResponse" => %{"Body" => %{"Categories" => categories}}}}
+  ) do
     categories = get_categories([], categories["Category"])
     categories = List.flatten(categories)
     categories = Enum.uniq(categories)
