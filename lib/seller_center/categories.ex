@@ -64,9 +64,7 @@ defmodule SellerCenter.Categories do
   end
 
   def get_categories(parent, categories) when Kernel.is_list(categories) do
-    Enum.map(
-      categories, fn(category) -> get_category(parent, category) end
-    )
+    Enum.map(categories, fn(category) -> get_category(parent, category) end)
   end
 
   def get_category(parent, category = %{"Children" => ""}) do
