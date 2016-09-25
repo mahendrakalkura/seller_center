@@ -32,51 +32,26 @@ defmodule SellerCenter.Attributes do
     }
   end
 
-  def parse_body(channel, {:ok, %{"SuccessResponse" => success_response}})
-    when Kernel.is_map(success_response) do
-    body = {:ok, success_response}
-    parse_body(channel, body)
-  end
-
-  def parse_body(channel, {:ok, %{"Body" => body}}) when Kernel.is_map(body) do
-    body = {:ok, body}
-    parse_body(channel, body)
-  end
-
-  def parse_body(channel, {:ok, %{"Attribute" => attributes}})
-    when Kernel.is_list(attributes) do
+  def parse_body(
+    channel,
+    {:ok, %{"SuccessResponse" => %{"Body" => %{"Attribute" => attributes}}}}
+  ) do
     attributes = Enum.map(
       attributes, fn(attribute) -> get_attribute(channel, attribute) end
     )
     attributes = Enum.uniq(attributes)
-    attributes = Enum.sort_by(
-      attributes,
-      fn(attribute) ->
-        case channel["language"] do
-          "es" -> String.downcase(attribute["name_es"])
-          _language -> String.downcase(attribute["name"])
-        end
-      end
-    )
+    attributes = sort(channel, attributes)
     {:ok, attributes}
   end
 
-  def parse_body(channel, {:ok, %{"ErrorResponse" => error_response}})
-    when Kernel.is_map(error_response) do
-    body = {:ok, error_response}
-    parse_body(channel, body)
-  end
-
-  def parse_body(channel, {:ok, %{"Head" => head}}) when Kernel.is_map(head) do
-    body = {:ok, head}
-    parse_body(channel, body)
-  end
-
-  def parse_body(_channel, {:ok, %{"ErrorCode" => error_code}}) do
+  def parse_body(
+    _channel,
+    {:ok, %{"ErrorResponse" => %{"Head" => %{"ErrorCode" => error_code}}}}
+  ) do
     {:ok, error_code}
   end
 
-  def parse_body(_channel, {:ok, _attributes}) do
+  def parse_body(_channel, {:ok, _contents}) do
     {:error, nil}
   end
 
@@ -86,17 +61,11 @@ defmodule SellerCenter.Attributes do
 
   def get_attribute(channel, attribute) do
     guid = attribute["Name"]
-
     {name, name_es} = get_names(channel, attribute)
-
     {description, description_es} = get_descriptions(channel, attribute)
-
-    is_mandatory = get_is_mandatory(attribute)
-
+    is_mandatory = get_is_mandatory(channel, attribute)
     options = get_options(channel, attribute)
-
-    type = get_type(options, attribute)
-
+    type = get_type(channel, attribute, options)
     %{
       "guid" => guid,
       "name" => name,
@@ -109,20 +78,12 @@ defmodule SellerCenter.Attributes do
     }
   end
 
-  def get_names(%{"language" => "en"}, attribute) do
-    {attribute["Label"], ""}
-  end
-
   def get_names(%{"language" => "es"}, attribute) do
     {"", attribute["Label"]}
   end
 
   def get_names(_channel, attribute) do
     {attribute["Label"], ""}
-  end
-
-  def get_descriptions(%{"language" => "en"}, attribute) do
-    {attribute["Description"], ""}
   end
 
   def get_descriptions(%{"language" => "es"}, attribute) do
@@ -133,11 +94,11 @@ defmodule SellerCenter.Attributes do
     {attribute["Description"], ""}
   end
 
-  def get_is_mandatory(%{"isMandatory" => "1"}) do
+  def get_is_mandatory(_channel, %{"isMandatory" => "1"}) do
     true
   end
 
-  def get_is_mandatory(_attribute) do
+  def get_is_mandatory(_channel, _attribute) do
     false
   end
 
@@ -193,51 +154,55 @@ defmodule SellerCenter.Attributes do
     [name, name]
   end
 
-  def get_type(options, %{"InputType" => "checkbox"})
-    when Kernel.length(options) == 0 do
+  def get_type(_channel, %{"InputType" => "checkbox"}, []) do
     ~s(input[type="checkbox"])
   end
 
-  def get_type(options, %{"InputType" => "datefield"})
-    when Kernel.length(options) == 0 do
+  def get_type(_channel, %{"InputType" => "datefield"}, []) do
     ~s(input[type="date"])
   end
 
-  def get_type(options, %{"InputType" => "datetime"})
-    when Kernel.length(options) == 0 do
+  def get_type(_channel, %{"InputType" => "datetime"}, []) do
     ~s(input[type="datetime"])
   end
 
-  def get_type(options, %{"InputType" => "dropdown"})
-    when Kernel.length(options) == 0 do
+  def get_type(_channel, %{"InputType" => "dropdown"}, []) do
     ~s(select)
   end
 
-  def get_type(options, %{"InputType" => "multiselect"})
-    when Kernel.length(options) == 0 do
-    ~s(select[multiple="multiple"])
+  def get_type(_channel, %{"InputType" => "multiselect"}, []) do
+    ~s(select)
   end
 
-  def get_type(options, %{"InputType" => "numberfield"})
-    when Kernel.length(options) == 0 do
+  def get_type(_channel, %{"InputType" => "numberfield"}, []) do
     ~s(input[type="number"])
   end
 
-  def get_type(options, %{"InputType" => "textarea"})
-    when Kernel.length(options) == 0 do
+  def get_type(_channel, %{"InputType" => "textarea"}, []) do
     ~s(textarea)
   end
 
-  def get_type(options, %{"InputType" => "textfield"})
-    when Kernel.length(options) == 0 do
+  def get_type(_channel, %{"InputType" => "textfield"}, []) do
     ~s(input[type="text"])
   end
 
-  def get_type(options, _type) when Kernel.length(options) == 0 do
+  def get_type(_channel, _attribute, []) do
     ~s(input[type="text"])
   end
 
-  def get_type(options, _type) when Kernel.length(options) != 0 do
+  def get_type(_channel, _attribute, _options) do
     "select"
+  end
+
+  def sort(channel, attributes) do
+    Enum.sort_by(
+      attributes,
+      fn(attribute) ->
+        case channel["language"] do
+          "es" -> String.downcase(attribute["name_es"])
+          _language -> String.downcase(attribute["name"])
+        end
+      end
+    )
   end
 end
