@@ -11,18 +11,14 @@ defmodule SellerCenter do
     )
   end
 
-  def parse_response(
-    {:ok, %HTTPoison.Response{status_code: 200, body: body}}
-  ) do
-    JSX.decode(body)
-  end
-
-  def parse_response({:ok, %HTTPoison.Response{status_code: status_code}}) do
-    {:error, status_code}
-  end
-
-  def parse_response({:error, %HTTPoison.Error{reason: reason}}) do
-    {:error, reason}
+  def parse_response(response) do
+    case response do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        {:ok, body}
+      {:ok, %HTTPoison.Response{status_code: status_code}} ->
+        {:error, status_code}
+      {:error, %HTTPoison.Error{reason: reason}} -> {:error, reason}
+    end
   end
 
   def get_params(channel, params_custom) do
