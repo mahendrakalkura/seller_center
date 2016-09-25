@@ -43,6 +43,7 @@ defmodule SellerCenter.Categories do
 
   def parse_body({:ok, %{"Categories" => categories}}) do
     categories = get_categories([], categories["Category"])
+    categories = List.flatten(categories)
     {:ok, categories}
   end
 
@@ -59,13 +60,8 @@ defmodule SellerCenter.Categories do
   end
 
   def get_categories(parent, categories) when Kernel.is_list(categories) do
-    Enum.reduce(
-      categories,
-      %{},
-      fn(category, categories) ->
-        category = get_category(parent, category)
-        Map.merge(categories, category)
-      end
+    Enum.map(
+      categories, fn(category) -> get_category(parent, category) end
     )
   end
 
