@@ -44,6 +44,7 @@ defmodule SellerCenter.Categories do
   def parse_body({:ok, %{"Categories" => categories}}) do
     categories = get_categories([], categories["Category"])
     categories = List.flatten(categories)
+    categories = Enum.uniq(categories)
     categories = Enum.sort_by(categories, fn(category) -> category["name"] end)
     {:ok, categories}
   end
