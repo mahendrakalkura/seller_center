@@ -53,8 +53,8 @@ defmodule SellerCenter.Attributes do
       attributes,
       fn(attribute) ->
         case channel["language"] do
-          "es" -> attribute["name_es"]
-          _language -> attribute["name"]
+          "es" -> String.downcase(attribute["name_es"])
+          _language -> String.downcase(attribute["name"])
         end
       end
     )
@@ -94,7 +94,6 @@ defmodule SellerCenter.Attributes do
     is_mandatory = get_is_mandatory(attribute)
 
     options = get_options(channel, attribute)
-    options = Enum.into(options, %{})
 
     type = get_type(options, attribute)
 
@@ -105,8 +104,8 @@ defmodule SellerCenter.Attributes do
       "description" => description,
       "description_es" => description_es,
       "is_mandatory" => is_mandatory,
-      "type" => type,
       "options" => options,
+      "type" => type,
     }
   end
 
@@ -142,54 +141,6 @@ defmodule SellerCenter.Attributes do
     false
   end
 
-  def get_type(options, %{"InputType" => "checkbox"})
-    when Kernel.map_size(options) == 0 do
-    ~s(input[type="checkbox"])
-  end
-
-  def get_type(options, %{"InputType" => "datefield"})
-    when Kernel.map_size(options) == 0 do
-    ~s(input[type="date"])
-  end
-
-  def get_type(options, %{"InputType" => "datetime"})
-    when Kernel.map_size(options) == 0 do
-    ~s(input[type="datetime"])
-  end
-
-  def get_type(options, %{"InputType" => "dropdown"})
-    when Kernel.map_size(options) == 0 do
-    ~s(select)
-  end
-
-  def get_type(options, %{"InputType" => "multiselect"})
-    when Kernel.map_size(options) == 0 do
-    ~s(select[multiple="multiple"])
-  end
-
-  def get_type(options, %{"InputType" => "numberfield"})
-    when Kernel.map_size(options) == 0 do
-    ~s(input[type="number"])
-  end
-
-  def get_type(options, %{"InputType" => "textarea"})
-    when Kernel.map_size(options) == 0 do
-    ~s(textarea)
-  end
-
-  def get_type(options, %{"InputType" => "textfield"})
-    when Kernel.map_size(options) == 0 do
-    ~s(input[type="text"])
-  end
-
-  def get_type(options, _type) when Kernel.map_size(options) == 0 do
-    ~s(input[type="text"])
-  end
-
-  def get_type(options, _type) when Kernel.map_size(options) != 0 do
-    "select"
-  end
-
   def get_options(_channel, %{"Options" => options})
     when Kernel.is_bitstring(options) do
     []
@@ -197,7 +148,6 @@ defmodule SellerCenter.Attributes do
 
   def get_options(channel, %{"Options" => options})
     when Kernel.is_map(options) do
-    options = [options]
     get_options(channel, options)
   end
 
@@ -224,18 +174,70 @@ defmodule SellerCenter.Attributes do
 
   def get_options(channel, options) do
     options = Enum.map(options, fn(option) -> get_option(channel, option) end)
-    Enum.uniq(options)
-  end
-
-  def get_option(%{"language" => "en"}, option) do
-    {option["Name"], option["Name"]}
+    options = Enum.filter(
+      options, fn([key, _value]) -> String.length(key) > 0 end
+    )
+    options = Enum.uniq(options)
+    Enum.sort_by(options, fn([key, _value]) -> key end)
   end
 
   def get_option(%{"language" => "es"}, option) do
-    {option["Name"], ""}
+    name = option["Name"]
+    name = String.trim(name)
+    [name, ""]
   end
 
   def get_option(_channel, option) do
-    {option["Name"], option["Name"]}
+    name = option["Name"]
+    name = String.trim(name)
+    [name, name]
+  end
+
+  def get_type(options, %{"InputType" => "checkbox"})
+    when Kernel.length(options) == 0 do
+    ~s(input[type="checkbox"])
+  end
+
+  def get_type(options, %{"InputType" => "datefield"})
+    when Kernel.length(options) == 0 do
+    ~s(input[type="date"])
+  end
+
+  def get_type(options, %{"InputType" => "datetime"})
+    when Kernel.length(options) == 0 do
+    ~s(input[type="datetime"])
+  end
+
+  def get_type(options, %{"InputType" => "dropdown"})
+    when Kernel.length(options) == 0 do
+    ~s(select)
+  end
+
+  def get_type(options, %{"InputType" => "multiselect"})
+    when Kernel.length(options) == 0 do
+    ~s(select[multiple="multiple"])
+  end
+
+  def get_type(options, %{"InputType" => "numberfield"})
+    when Kernel.length(options) == 0 do
+    ~s(input[type="number"])
+  end
+
+  def get_type(options, %{"InputType" => "textarea"})
+    when Kernel.length(options) == 0 do
+    ~s(textarea)
+  end
+
+  def get_type(options, %{"InputType" => "textfield"})
+    when Kernel.length(options) == 0 do
+    ~s(input[type="text"])
+  end
+
+  def get_type(options, _type) when Kernel.length(options) == 0 do
+    ~s(input[type="text"])
+  end
+
+  def get_type(options, _type) when Kernel.length(options) != 0 do
+    "select"
   end
 end
