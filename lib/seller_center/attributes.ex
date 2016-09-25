@@ -85,6 +85,8 @@ defmodule SellerCenter.Attributes do
   end
 
   def get_attribute(channel, attribute) do
+    guid = attribute["Name"]
+
     {name, name_es} = get_names(channel, attribute)
 
     {description, description_es} = get_descriptions(channel, attribute)
@@ -97,6 +99,7 @@ defmodule SellerCenter.Attributes do
     type = get_type(options, attribute)
 
     %{
+      "guid" => guid,
       "name" => name,
       "name_es" => name_es,
       "description" => description,
