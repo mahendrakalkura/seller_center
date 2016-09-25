@@ -4,12 +4,7 @@ defmodule SellerCenter.Mixfile do
   use Mix.Project
 
   def application() do
-    [
-      applications: [
-        :httpoison,
-        :timex,
-      ],
-    ]
+    [applications: [:httpoison, :timex]]
   end
 
   def deps() do
