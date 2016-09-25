@@ -73,7 +73,8 @@ defmodule SellerCenter.Categories do
     guid = category["CategoryId"]
     name = get_name(parent, category["Name"])
     %{
-      guid => name,
+      "guid" => guid,
+      "name" => name,
     }
   end
 
