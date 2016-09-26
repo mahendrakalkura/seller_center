@@ -14,7 +14,7 @@ defmodule SellerCenter do
   def parse_response(response) do
     case response do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        {:ok, body}
+        JSX.decode(body)
       {:ok, %HTTPoison.Response{status_code: status_code}} ->
         {:error, status_code}
       {:error, %HTTPoison.Error{reason: reason}} -> {:error, reason}
