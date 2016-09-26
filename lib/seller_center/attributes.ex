@@ -194,15 +194,15 @@ defmodule SellerCenter.Attributes do
     "select"
   end
 
-  def sort(channel, attributes) do
+  def sort(%{"language" => "es"}, attributes) do
     Enum.sort_by(
-      attributes,
-      fn(attribute) ->
-        case channel["language"] do
-          "es" -> String.downcase(attribute["name_es"])
-          _language -> String.downcase(attribute["name"])
-        end
-      end
+      attributes, fn(attribute) -> String.downcase(attribute["name_es"]) end
+    )
+  end
+
+  def sort(_channel, attributes) do
+    Enum.sort_by(
+      attributes, fn(attribute) -> String.downcase(attribute["name"]) end
     )
   end
 end
