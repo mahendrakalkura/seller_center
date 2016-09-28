@@ -5,7 +5,7 @@ defmodule SellerCenter.Attributes do
     arguments = get_arguments(channel, primary_category)
     response = SellerCenter.http_poison(arguments)
     body = SellerCenter.parse_response(response)
-    parse_body(channel, body)
+    parse_body(body)
   end
 
   def get_arguments(channel, primary_category) do
@@ -30,29 +30,29 @@ defmodule SellerCenter.Attributes do
   end
 
   def parse_body(
-    channel,
     {:ok, %{"SuccessResponse" => %{"Body" => %{"Attribute" => attributes}}}}
   ) do
     attributes = Enum.map(
       attributes, fn(attribute) -> get_attribute(channel, attribute) end
     )
     attributes = Enum.uniq(attributes)
-    attributes = sort(channel, attributes)
+    attributes = Enum.sort_by(
+      attributes, fn(attribute) -> String.downcase(attribute["guid"]) end
+    )
     {:ok, attributes}
   end
 
   def parse_body(
-    _channel,
     {:ok, %{"ErrorResponse" => %{"Head" => %{"ErrorCode" => error_code}}}}
   ) do
     {:ok, error_code}
   end
 
-  def parse_body(_channel, {:ok, _contents}) do
+  def parse_body({:ok, _contents}) do
     {:error, nil}
   end
 
-  def parse_body(_channel, {:error, reason}) do
+  def parse_body({:error, reason}) do
     {:error, reason}
   end
 
@@ -189,17 +189,5 @@ defmodule SellerCenter.Attributes do
 
   def get_type(_channel, _attribute, _options) do
     "select"
-  end
-
-  def sort(%{"language" => "es"}, attributes) do
-    Enum.sort_by(
-      attributes, fn(attribute) -> String.downcase(attribute["name_es"]) end
-    )
-  end
-
-  def sort(_channel, attributes) do
-    Enum.sort_by(
-      attributes, fn(attribute) -> String.downcase(attribute["name"]) end
-    )
   end
 end
