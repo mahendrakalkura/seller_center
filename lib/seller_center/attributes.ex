@@ -9,10 +9,7 @@ defmodule SellerCenter.Attributes do
   end
 
   def get_arguments(channel, primary_category) do
-    method = :get
     url = channel["url"]
-    body = ""
-    headers = []
     params = %{
       "Action" => "GetCategoryAttributes",
       "PrimaryCategory" => primary_category,
@@ -24,10 +21,10 @@ defmodule SellerCenter.Attributes do
       {:timeout, Application.get_env(:httpoison, :timeout, nil)},
     ]
     %{
-      "method" => method,
+      "method" => :get,
       "url" => url,
-      "body" => body,
-      "headers" => headers,
+      "body" => "",
+      "headers" => [],
       "options" => options,
     }
   end

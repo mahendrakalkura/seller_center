@@ -9,10 +9,7 @@ defmodule SellerCenter.Categories do
   end
 
   def get_arguments(channel) do
-    method = :get
     url = channel["url"]
-    body = ""
-    headers = []
     params = %{
       "Action" => "GetCategoryTree",
     }
@@ -23,10 +20,10 @@ defmodule SellerCenter.Categories do
       {:timeout, Application.get_env(:httpoison, :timeout, nil)},
     ]
     %{
-      "method" => method,
+      "method" => :get,
       "url" => url,
-      "body" => body,
-      "headers" => headers,
+      "body" => "",
+      "headers" => [],
       "options" => options,
     }
   end
