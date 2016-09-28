@@ -35,7 +35,7 @@ defmodule SellerCenter.Categories do
     categories = List.flatten(categories)
     categories = Enum.uniq(categories)
     categories = Enum.sort_by(
-      categories, fn(category) -> String.downcase(category["name"]) end
+      categories, fn(category) -> String.downcase(category["guid"]) end
     )
     {:ok, categories}
   end
