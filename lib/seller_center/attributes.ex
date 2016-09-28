@@ -5,7 +5,7 @@ defmodule SellerCenter.Attributes do
     arguments = get_arguments(channel, primary_category)
     response = SellerCenter.http_poison(arguments)
     body = SellerCenter.parse_response(response)
-    parse_body(body)
+    parse_body(channel, body)
   end
 
   def get_arguments(channel, primary_category) do
@@ -30,6 +30,7 @@ defmodule SellerCenter.Attributes do
   end
 
   def parse_body(
+    channel,
     {:ok, %{"SuccessResponse" => %{"Body" => %{"Attribute" => attributes}}}}
   ) do
     attributes = Enum.map(
@@ -43,16 +44,17 @@ defmodule SellerCenter.Attributes do
   end
 
   def parse_body(
+    _channel,
     {:ok, %{"ErrorResponse" => %{"Head" => %{"ErrorCode" => error_code}}}}
   ) do
     {:ok, error_code}
   end
 
-  def parse_body({:ok, _contents}) do
+  def parse_body(_channel, {:ok, _contents}) do
     {:error, nil}
   end
 
-  def parse_body({:error, reason}) do
+  def parse_body(_channel, {:error, reason}) do
     {:error, reason}
   end
 
