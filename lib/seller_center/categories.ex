@@ -31,12 +31,7 @@ defmodule SellerCenter.Categories do
   def parse_body(
     {:ok, %{"SuccessResponse" => %{"Body" => %{"Categories" => categories}}}}
   ) do
-    categories = get_categories([], categories["Category"])
-    categories = List.flatten(categories)
-    categories = Enum.uniq(categories)
-    categories = Enum.sort_by(
-      categories, fn(category) -> String.downcase(category["guid"]) end
-    )
+    categories = get_categories(categories["Category"])
     {:ok, categories}
   end
 
@@ -46,6 +41,15 @@ defmodule SellerCenter.Categories do
 
   def parse_body({:error, reason}) do
     {:error, reason}
+  end
+
+  def get_categories(categories) do
+    categories = get_categories([], categories["Category"])
+    categories = List.flatten(categories)
+    categories = Enum.uniq(categories)
+    Enum.sort_by(
+      categories, fn(category) -> String.downcase(category["guid"]) end
+    )
   end
 
   def get_categories(parent, categories) when Kernel.is_map(categories) do
@@ -59,10 +63,7 @@ defmodule SellerCenter.Categories do
   def get_category(parent, category = %{"Children" => ""}) do
     guid = category["CategoryId"]
     name = get_name(parent, category["Name"])
-    %{
-      "guid" => guid,
-      "name" => name,
-    }
+    %{"guid" => guid, "name" => name}
   end
 
   def get_category(parent, category) do
