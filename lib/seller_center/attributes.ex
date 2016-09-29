@@ -33,13 +33,7 @@ defmodule SellerCenter.Attributes do
     channel,
     {:ok, %{"SuccessResponse" => %{"Body" => %{"Attribute" => attributes}}}}
   ) do
-    attributes = Enum.map(
-      attributes, fn(attribute) -> get_attribute(channel, attribute) end
-    )
-    attributes = Enum.uniq(attributes)
-    attributes = Enum.sort_by(
-      attributes, fn(attribute) -> String.downcase(attribute["guid"]) end
-    )
+    attributes = get_attributes(channel, attributes)
     {:ok, attributes}
   end
 
@@ -56,6 +50,16 @@ defmodule SellerCenter.Attributes do
 
   def parse_body(_channel, {:error, reason}) do
     {:error, reason}
+  end
+
+  def get_attributes(channel, attributes) do
+    attributes = Enum.map(
+      attributes, fn(attribute) -> get_attribute(channel, attribute) end
+    )
+    attributes = Enum.uniq(attributes)
+    Enum.sort_by(
+      attributes, fn(attribute) -> String.downcase(attribute["guid"]) end
+    )
   end
 
   def get_attribute(channel, attribute) do
